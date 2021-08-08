@@ -1,0 +1,45 @@
+import pandas as pd
+
+df = pd.read_csv("NAME.cvs", index_col = 0)  # remove first colum of index
+df.head()
+
+df["grade"].unique()
+#  df["grade"].astype("categoray").cat.codes  # classification- assign arbitrary code into grade, features are not suited
+
+grade_class_dict = {"A":1, "B":2, "C":3}  # assign dictionary for each grade to make them meaningful
+colum2_dict = {....}  # name of other colum that needed to be implemented
+colum3_dict = {....}
+
+df['grade'] = df['grade'].map(grade_class_dict)
+df['colum2'] = df['colum2'].map(colum2_dict)
+df['colum3'] = df['colum3'].map(colum3_dict)
+
+
+import sklearn
+from sklearn import svm, preprocessing
+from sklearn.linear_model import SGDRegressor
+
+df = sklearn.utils.shuffle(df)
+
+X = df.drop("price", axis=1).values  # feature set, list of features that point to the label (like price and etc.) # axis 1 is colum, 0 is row
+X = preprocessing.scale(X)   # simplifies data for the model
+y = df['price'].values
+
+test_size = 200
+
+X_train = [:-test_size]     # up to until the last 200 data
+y_train = [:-test_size]
+
+X_test = [-test_size:]  # last 200 data
+y_test = [-test_size:]
+
+clf = svm.SVR(kernel = "linear")  # kernel="rbf"
+# clf = SGDRegressor(max_iter = 1000)
+clf.fit(X_train, y_train)
+
+clf.score(X_test, y_test)
+
+for X, y in zip(X_test, y_test):
+    print(f"Model: {clf.predict([X])[0]), Actual: {y}")
+
+
